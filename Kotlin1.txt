@@ -1,0 +1,199 @@
+z1.-----------------------------------
+
+fun funkcja(a: Int) {
+    for (i in 1..a) {
+        if ((i % 3 == 0) && (i % 5 == 0)){
+            println("trzypiec")
+        }
+        else if (i % 3 == 0) {
+            println("trzy")
+        }
+        else if (i % 5 == 0) {
+            println("piec")
+        }
+        else {
+            println(i)
+        }
+    }
+}
+
+fun main() {
+    val N = 30
+    funkcja(N)
+}
+
+z2.-----------------------------------
+
+fun isPalindrom (word: String) :Boolean{
+    val n = word.length
+    
+    for (i in 0 until n/2) {
+        if (word[0+i] != word[n-1-i]) {
+            return false
+        }
+    }
+    return true
+}
+
+fun main() {
+    val word = "abba"
+    println(isPalindrom(word))
+}
+
+z3.-----------------------------------
+
+fun Pascal(n: Int) {
+    for (i in 1..n) {
+        for (j in 1 until (n-i+1)) {
+            print(" ")
+        }
+        var C = 1
+        for (k in 1..i) {
+            print("$C ")
+            C = C * (i - k) / k
+        }
+        
+        println(" ")
+    }
+    
+}
+
+fun main() {
+    val h = 4
+    Pascal(h)
+}
+
+z4.-----------------------------------
+
+fun isPerfect(a: Int) {
+    var liczby = arrayOf(1)
+    
+    for (i in 2 until a) {
+        if (a % i == 0) {
+            liczby += i
+        }
+    }
+    
+    if (liczby.sum() == a) {
+        println("perfect")
+    }
+    else if (liczby.sum() > a) {
+        println("abundant")
+    }
+    else {
+        println("deficient")
+    }
+}
+
+fun main() {
+    val n1 = 28
+    val n2 = 12
+    val n3 = 8
+    
+    println(n1)
+    isPerfect(n1)
+    
+    println(n2)
+    isPerfect(n2)
+    
+    println(n3)
+    isPerfect(n3)
+}
+
+z.5--------------------------------------
+
+import kotlin.math.pow
+fun isArmstrong(a: Int) :Boolean{
+    var n = 0
+    var temp = a
+    while(temp != 0) {
+        temp /= 10
+        n++
+    }
+    
+    temp = a
+    var suma = 0
+    
+    while(temp != 0) {
+        val cyfra = temp % 10
+        suma += cyfra.toDouble().pow(n).toInt()
+        temp /= 10
+    }
+    
+    return suma == a
+}
+
+fun main() {
+    val n1 = 153
+    println(isArmstrong(n1))
+    
+    val n2 = 154
+    println(isArmstrong(n2))
+    
+}
+
+z6.-----------------------------------------------------------------
+
+fun isPrime(a: Int) :Boolean{
+    if (a <= 1){
+        return false
+    }
+    
+    for (i in 2 until a) {
+        if (a % i == 0) {
+            return false
+        }
+        
+    }
+    return true
+}
+
+fun main() {
+    val n1 = 3
+    println(isPrime(n1))
+    
+    val n2 = 12
+    println(isPrime(n2))
+    
+    val n3 = -1
+    println(isPrime(n3))
+    
+    val n4 = 51
+    println(isPrime(n4))
+}
+
+z7.-----------------------------------------------------------------
+
+fun sumEven(a: Int) :Int{
+    var suma = 0
+    for (i in 1..a){
+        if(i % 2 == 0){
+            suma += i
+        }
+    }
+    return suma
+}
+
+fun main() {
+    val N = 10
+    println(sumEven(N))
+}
+
+z8.-----------------------------------------------------------------
+
+fun countVowels (word: String) :Int{
+    var suma = 0
+    val a = word.lowercase()
+    for (i in 0 until a.length) {
+        if ((a[i] == 'a') || (a[i] == 'e') || (a[i] == 'i') || (a[i] == 'o') || (a[i] == 'u') || (a[i] == 'y')) {
+            suma++
+        }
+    }
+    return suma
+}
+
+fun main() {
+    val slowo = "programowanie"
+    println(countVowels(slowo))
+    
+}
