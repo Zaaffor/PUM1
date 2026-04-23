@@ -1,0 +1,163 @@
+z.1
+
+data class UserInput(val name: String?, val email: String?, val age: String?)
+data class UserProfile(
+	var name: String = "",
+    var email: String = "",
+    var age: Int = 0,
+    var isAdult: Boolean = false
+)
+
+fun buildProfile(input: UserInput?, logs: MutableList<String>): UserProfile? {
+    return input?.let {data -> 
+    	val name = data.name
+        	?.let {it.trim()}
+            ?: run{
+                logs.add("Name is NULL")
+                return null
+            }
+            
+        if (name.length < 3) {
+            logs.add("Name too short")
+            return null
+        }
+        
+        val email = data.email
+        	?.let {it.trim().lowercase()}
+            ?: run {
+                logs.add("Email is NULL")
+                return null
+            }
+            
+        if (!email.contains("@")) {
+            logs.add("Invalid email")
+            return null
+        }
+        
+        val age = data.age
+        	?.let {it.toIntOrNull()}
+            ?: run {
+                logs.add("Age is NULL")
+                return null
+            }
+            ?: run {
+                logs.add("Age is not a number")
+                return null
+            }
+            
+            
+        UserProfile().apply {
+            this.name = name
+            this.email = email
+            this.age = age
+            this.isAdult = age >= 18
+        }.also {
+            logs.add("Profile created for $email")
+        }
+    
+    } ?: run {
+        logs.add("Input is NULL")
+        return null
+    }
+}
+
+----------------------------------------------------------
+
+z.2
+
+val <T> List<T>.head: T
+	get() = this.first()
+    
+val <T> List<T>.tail: List<T>
+	get() = this.drop(1)
+    
+    
+fun main() {
+    
+    val lista = listOf(1, 2, 3, 4)
+    
+    println(lista)
+    println(lista.head)
+    println(lista.tail)
+}
+
+------------------------------------------------------------
+
+z.3
+
+fun <A> isSorted(lista: List<A>, order: (A, A) -> Boolean): Boolean {
+    if (lista.size < 2) return true
+    
+    for (i in 0 until lista.size - 1) {
+        if (!order(lista[i], lista[i + 1])) {
+            return false
+        }
+    }
+    
+    return true
+}
+
+fun main() {
+    val lista = listOf(1, 2, 3, 4)
+    
+    println(isSorted(lista, {i, j -> i < j}))
+    println(isSorted(lista, {i, j -> i > j}))
+}
+
+
+-------------------------------------------------------
+
+z.4
+
+fun safeParseAndClassify(input: String?): String {
+    if (input.isNullOrBlank()) return "BRAK DANYCH"
+    
+    val liczba = input.toIntOrNull()
+    	?: return "BRAK DANYCH"
+    
+    return if (liczba % 2 == 0) "PARZYSTA" else "NIEPARZYSTA"
+    
+}
+
+fun main() {
+    println(safeParseAndClassify(null))
+    println(safeParseAndClassify("   "))
+    println(safeParseAndClassify("10"))
+    println(safeParseAndClassify("7"))
+    println(safeParseAndClassify("x"))
+}
+
+
+---------------------------------------------------------
+z.5
+
+fun check(n: Int, lista: List<Int>): Int {
+    if (lista.size <= n) return -1
+    
+    for (i in n until lista.size) {
+        val preambula = lista.subList(i - n, i)
+        val temp = lista[i]
+        var znalezione = false
+        
+        for (j in preambula.indices) {
+            for (k in j + 1 until preambula.size) {
+                if (preambula[j] + preambula[k] == temp) {
+                    znalezione = true
+                    break
+                }
+            }
+            if (znalezione) break
+        }
+        
+        if (!znalezione) return temp
+    }
+    
+    return -1
+}
+
+fun main() {
+    println(check(3, listOf(1, 2, 3, 5, 7, 12, 30)))
+    println(check(2, listOf(1, 2, 3, 4, 5, 6)))
+    println(check(5, listOf(35, 25, 15, 25, 47, 40, 62, 55, 65, 95, 102, 117, 150, 182, 127, 219, 299, 277, 309, 576)))
+}
+
