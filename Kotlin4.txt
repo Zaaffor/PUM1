@@ -1,0 +1,115 @@
+import kotlin.random.*
+import java.time.LocalDate
+import java.time.Month
+
+enum class CostType(val costType: String) {
+    REFUELING("Tankowanie"),
+    SERVICE("Serwis"),
+    PARKING("Parking"),
+    INSURANCE("Ubezpieczenie"),
+    TICKET("Mandat")
+}
+
+data class Cost (
+    val type: CostType,
+    val date: LocalDate,
+    val amount: Int
+)
+
+object DataProvider {
+    val GeneralCosts = List(20) {
+        Cost(
+            CostType
+                    .values()[Random.nextInt(CostType.values().size)],
+            LocalDate.of(
+                2026,
+                Random.nextInt(1, 13),
+                Random.nextInt(1, 28)),
+            Random.nextInt(5000)
+        )
+    }
+}
+
+sealed class MonthlyCostsStatus {
+    data object NoCosts : MonthlyCostsStatus() //brakowało data
+    data class WithinLimit(val total : Int) : MonthlyCostsStatus()
+    data class OverLimit(val total: Int, val exceededBy : Int) : MonthlyCostsStatus()
+}
+
+fun classifyMonthlyCosts(costs: List<Cost>, month: Month, limit: Int): MonthlyCostsStatus {
+    val monthlyTotal = costs
+        .filter {it.date.month == month}
+        .sumOf {it.amount}
+
+    return when {
+        monthlyTotal == 0 ->
+            MonthlyCostsStatus.NoCosts
+
+        monthlyTotal <= limit ->
+            MonthlyCostsStatus.WithinLimit(monthlyTotal)
+
+        else ->
+            MonthlyCostsStatus.OverLimit(total = monthlyTotal, exceededBy = monthlyTotal - limit)
+    }
+}
+
+fun groupedCostMap(lista: List<Cost>): Map<Month, List<Cost>> {
+    return lista
+        .groupBy {it.date.month}
+        .toSortedMap()
+}
+
+interface CostFormatter {
+    fun format(cost : Cost) : String
+}
+
+object PlCostFormatter : CostFormatter {
+    override fun format(cost: Cost): String {
+        val day = cost.date.dayOfMonth.toString()
+        return "$day ${cost.type.name} ${cost.amount} zl"
+    }
+}
+
+fun formatCosts(costs: List<Cost>, formatter: CostFormatter): String {
+    return costs
+        .sortedBy {it.date}
+        .map {formatter.format(it)}
+        .joinToString("\n")
+}
+
+fun printCosts(lista: List<Cost>) {
+    lista
+        .groupBy { it.date.month }      
+        .toSortedMap()                  
+        .forEach { (month, costs) ->
+            println(month)
+            costs
+                .sortedBy { it.date }   
+                .forEach { cost ->
+                    val day = cost.date.dayOfMonth.toString()
+                    println("$day ${cost.type.name} ${cost.amount} zl")
+                }
+        }
+}
+
+fun main() {
+    val costs = listOf(
+        Cost(CostType.REFUELING, LocalDate.of(2025, 1, 10), 300),
+        Cost(CostType.PARKING, LocalDate.of(2025, 1, 12), 50),
+        Cost(CostType.SERVICE, LocalDate.of(2025, 2, 4), 1200)
+    )
+    
+    val costs2 = listOf(
+        Cost(CostType.PARKING, LocalDate.of(2025, 1, 15), 30),
+        Cost(CostType.SERVICE, LocalDate.of(2025, 1, 5), 900)
+    )
+
+    println(groupedCostMap(DataProvider.GeneralCosts))
+    printCosts(DataProvider.GeneralCosts)
+
+    println(classifyMonthlyCosts(costs, Month.JANUARY, 400))
+    println(classifyMonthlyCosts(costs, Month.FEBRUARY, 1000))
+    println(classifyMonthlyCosts(costs, Month.MARCH, 500))
+
+    println(formatCosts(costs2, PlCostFormatter))
+}
